@@ -1,60 +1,117 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <meta charset="utf-8">
-    <title>Red Star OS – v86</title>
+<meta charset="utf-8">
+<title>Red Star OS – v86 debug</title>
 
-    <script src="build/libv86.js"></script>
+<script src="build/libv86.js"></script>
 
-    <style>
-        html, body {
-            margin: 0;
-            padding: 0;
-            background: black;
-            width: 100%;
-            height: 100%;
-            overflow: hidden;
-        }
+<style>
+html, body {
+    margin: 0;
+    padding: 0;
+    background: black;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+}
 
-        #screen_container {
-            width: 100%;
-            height: 100%;
-            background: black;
-        }
-    </style>
+#screen_container {
+    width: 100%;
+    height: 100%;
+    background: black;
+}
+
+#debug {
+    position: absolute;
+    top: 8px;
+    left: 8px;
+    color: white;
+    font-family: monospace;
+    font-size: 13px;
+    background: rgba(0,0,0,0.6);
+    padding: 8px;
+    z-index: 9999;
+    max-width: 90%;
+    white-space: pre-line;
+}
+</style>
 </head>
 
 <body>
 
 <div id="screen_container"></div>
+<div id="debug">Initializing v86…</div>
 
 <script>
-    const emulator = new V86Starter({
-        wasm_path: "build/v86.wasm",
+const debug = document.getElementById("debug");
 
-        screen_container: document.getElementById("screen_container"),
+function log(msg) {
+    debug.textContent += "\n" + msg;
+}
 
-        memory_size: 256 * 1024 * 1024,
-        vga_memory_size: 64 * 1024 * 1024,
+log("Loading emulator…");
 
-        bios: {
-            url: "bios/seabios.bin"
-        },
+const emulator = new V86Starter({
+    wasm_path: "build/v86.wasm",
 
-        vga_bios: {
-            url: "bios/vgabios.bin"
-        },
+    screen_container: document.getElementById("screen_container"),
 
-        cdrom: {
-            url: "https://archive.org/download/dprk-red-star_202601/DPRK-Red-Star.iso"
-        },
+    memory_size: 256 * 1024 * 1024,
+    vga_memory_size: 64 * 1024 * 1024,
 
-        boot_order: 0x132,
-        autostart: true,
-        acpi: false
-    });
+    bios: {
+        url: "bios/seabios.bin"
+    },
+
+    vga_bios: {
+        url: "bios/vgabios.bin"
+    },
+
+    cdrom: {
+        url: "https://archive.org/download/dprk-red-star_202601/DPRK-Red-Star.iso"
+    },
+
+    boot_order: 0x132,
+
+    autostart: true,
+
+    acpi: false,
+    disable_jit: true,
+});
+
+emulator.add_listener("emulator-ready", () => {
+    log("Emulator ready");
+});
+
+emulator.add_listener("emulator-started", () => {
+    log("Emulator started");
+});
+
+emulator.add_listener("download-progress", e => {
+    log(
+        "Downloading ISO: " +
+        Math.floor(e.loaded / 1024 / 1024) + "MB / " +
+        Math.floor(e.total / 1024 / 1024) + "MB"
+    );
+});
+
+emulator.add_listener("download-finished", () => {
+    log("ISO download finished");
+});
+
+emulator.add_listener("cpu-started", () => {
+    log("CPU started");
+});
+
+emulator.add_listener("screen-set-mode", () => {
+    log("VGA mode set");
+});
+
+emulator.add_listener("emulator-stopped", () => {
+    log("Emulator stopped");
+});
 </script>
 
 </body>
 </html>
-
