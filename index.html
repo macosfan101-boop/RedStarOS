@@ -10,7 +10,6 @@ body {
     color: #0f0;
     font-family: monospace;
     margin: 0;
-    padding: 0;
     overflow: hidden;
 }
 
@@ -49,18 +48,19 @@ body {
 <div id="screen"></div>
 <pre id="serial"></pre>
 
+<!-- IMPORTANT: v86.js must load BEFORE using V86Starter -->
 <script src="v86/build/v86.js"></script>
 
 <script>
 var emulator = new V86Starter({
+    use_wasm: true,
 
+    // REQUIRED for GitHub Pages
     wasm_path: "v86/build/v86.wasm",
+    wasm_fallback_path: "v86/build/v86.wasm",
 
-    // ✅ 200 MB RAM
-    memory_size: 200 * 1024 * 1024,
-
-    // ✅ 800 KB VGA memory
-    vga_memory_size: 800 * 1024,
+    memory_size: 200 * 1024 * 1024,      // 200 MB RAM
+    vga_memory_size: 8 * 1024 * 1024,    // 8 MB VRAM (800 KB would not work)
 
     screen_container: document.getElementById("screen"),
     serial_container: document.getElementById("serial"),
@@ -73,13 +73,13 @@ var emulator = new V86Starter({
         url: "v86/bios/vgabios.bin"
     },
 
+    // 🔥 your disk image
     hda: {
-        url: "https://github.com/macosfan101-boop/RedStarOS/releases/download/v1/redstar.img",
+        url: "https://github.com/macosfan101-boop/RedStarOS/releases/download/v1/redstar.img.xz",
         async: true
     },
 
     async_hda: true,
-    use_websocket: false,
 
     autostart: true
 });
