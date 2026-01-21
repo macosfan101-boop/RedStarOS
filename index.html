@@ -5,56 +5,76 @@
 <title>Red Star OS — Browser Emulator</title>
 
 <style>
-    body {
-        background: #000;
-        color: #0f0;
-        font-family: monospace;
-        margin: 0;
-        padding: 0;
-        overflow: hidden;
-    }
-    #topbar {
-        background: #111;
-        padding: 8px;
-        text-align: center;
-        border-bottom: 1px solid #333;
-    }
-    #screen {
-        width: 100%;
-        height: 75vh;
-    }
-    #serial {
-        height: 25vh;
-        overflow: auto;
-        padding: 6px;
-        font-size: 12px;
-        border-top: 1px solid #333;
-    }
+body {
+    background: #000;
+    color: #0f0;
+    font-family: monospace;
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+}
+
+#topbar {
+    background: #111;
+    padding: 8px;
+    text-align: center;
+    font-weight: bold;
+    border-bottom: 1px solid #333;
+}
+
+#screen {
+    width: 100%;
+    height: 75vh;
+    background: black;
+}
+
+#serial {
+    height: 25vh;
+    overflow: auto;
+    padding: 6px;
+    background: #000;
+    color: #0f0;
+    font-size: 12px;
+    border-top: 1px solid #333;
+}
 </style>
 </head>
+
 <body>
 
-<div id="topbar">Red Star OS — Browser Emulator</div>
+<div id="topbar">
+    Red Star OS 2.0 — v86 Emulator
+</div>
+
 <div id="screen"></div>
 <pre id="serial"></pre>
 
 <script src="v86/build/v86.js"></script>
+
 <script>
-const emulator = new V86Starter({
+var emulator = new V86Starter({
+
     wasm_path: "v86/build/v86.wasm",
 
-    memory_size: 1024 * 1024 * 1024,
-    vga_memory_size: 8 * 1024 * 1024,
+    // ✅ 200 MB RAM
+    memory_size: 200 * 1024 * 1024,
+
+    // ✅ 800 KB VGA memory
+    vga_memory_size: 800 * 1024,
 
     screen_container: document.getElementById("screen"),
     serial_container: document.getElementById("serial"),
 
-    bios: { url: "v86/bios/seabios.bin" },
-    vga_bios: { url: "v86/bios/vgabios.bin" },
+    bios: {
+        url: "v86/bios/seabios.bin"
+    },
 
-    // Boot your compressed image
+    vga_bios: {
+        url: "v86/bios/vgabios.bin"
+    },
+
     hda: {
-        url: "https://github.com/macosfan101-boop/RedStarOS/releases/download/v1/redstar.img.xz",
+        url: "https://github.com/macosfan101-boop/RedStarOS/releases/download/v1/redstar.img",
         async: true
     },
 
