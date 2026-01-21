@@ -1,30 +1,60 @@
 <!DOCTYPE html>
 <html>
 <head>
-<meta charset="utf-8">
-<title>Red Star OS Online</title>
-<script src="build/v86_all.js"></script>
+    <meta charset="utf-8">
+    <title>Red Star OS – v86</title>
+
+    <script src="build/libv86.js"></script>
+
+    <style>
+        html, body {
+            margin: 0;
+            padding: 0;
+            background: black;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+        }
+
+        #screen_container {
+            width: 100%;
+            height: 100%;
+            background: black;
+        }
+    </style>
 </head>
 
-<body style="margin:0;background:black;">
+<body>
+
 <div id="screen_container"></div>
 
 <script>
-new V86Starter({
-    wasm_path: "build/v86.wasm",
+    const emulator = new V86Starter({
+        wasm_path: "build/v86.wasm",
 
-    memory_size: 512 * 1024 * 1024,
-    vga_memory_size: 128 * 1024 * 1024,
+        screen_container: document.getElementById("screen_container"),
 
-    bios: { url: "bios/seabios.bin" },
-    vga_bios: { url: "bios/vgabios.bin" },
+        memory_size: 256 * 1024 * 1024,
+        vga_memory_size: 64 * 1024 * 1024,
 
-    cdrom: {
-        url: "https://archive.org/download/dprk-red-star_202601/DPRK-Red-Star.iso"
-    },
+        bios: {
+            url: "bios/seabios.bin"
+        },
 
-    autostart: true
-});
+        vga_bios: {
+            url: "bios/vgabios.bin"
+        },
+
+        cdrom: {
+            url: "https://archive.org/download/dprk-red-star_202601/DPRK-Red-Star.iso"
+        },
+
+        boot_order: 0x132,
+        autostart: true,
+        acpi: false
+    });
 </script>
+
 </body>
 </html>
+
